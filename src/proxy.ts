@@ -17,5 +17,5 @@ export function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/", "/about", "/tours", "/contact", "/:language([eE][nN]|[dD][eE]|[fF][rR]|[rR][uU]|[zZ][hH]-[cC][nN])/:path*"],
+  matcher: ["/", "/about", "/tours", "/contact", "/:language([eE][nN]|[dD][eE]|[fF][rR]|[iI][tT]|[rR][uU]|[zZ][hH]-[cC][nN])/:path*"],
 };

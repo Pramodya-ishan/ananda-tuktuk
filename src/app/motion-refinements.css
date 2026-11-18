@@ -36,3 +36,4 @@
 .ride-count .ride-count-old{position:absolute;inset:0 auto auto 0;opacity:0}
 .mobile-ridebar strong>span[hidden]{display:none}
 @media(prefers-reduced-motion:reduce){.mobile-ridebar,.experience-card .add-stop,.add-stop-icon .stop-plus,.add-stop-icon .stop-check{transition:none}.experience-card .add-stop:hover,.experience-card .add-stop:active{transform:none}}
+.experience-card .add-stop{max-width:calc(100% - 64px)}.experience-card .add-stop>span:last-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

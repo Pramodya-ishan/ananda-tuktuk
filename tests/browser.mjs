@@ -98,7 +98,9 @@ try {
 
   await check("WhatsApp receives the correct number and complete ride request, with a separate call number", async () => {
     await page.locator('input[name="pickup"]').fill("Hôtel & Spa + a quiet lunch");
+    await page.getByRole("button", { name: "Another date", exact: true }).click();
     await page.locator('input[name="date"]').fill("2099-10-12");
+    await page.getByRole("button", { name: "Exact time", exact: true }).click();
     await page.locator('input[name="time"]').fill("09:30");
     await page.getByRole("button", { name: "More people", exact: true }).click();
     await page.getByRole("button", { name: "More people", exact: true }).click();

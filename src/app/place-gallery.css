@@ -65,3 +65,21 @@
 .place-gallery-dots button,.place-gallery-dots [aria-current=true]{width:32px}
 .place-gallery-dots span,.place-gallery-dots [aria-current=true] span{width:24px;transform-origin:center;transform:scaleX(.334);transition:transform 260ms var(--ease-out),background-color 200ms ease}
 .place-gallery-dots [aria-current=true] span{transform:scaleX(1)}
+
+/* Dots v3: plain round dots, active one becomes a short pill inside a fixed slot */
+.place-gallery-dots{background:none;padding:0;gap:0}
+.place-gallery-dots button,.place-gallery-dots [aria-current=true]{width:26px;min-height:40px}
+.place-gallery-dots span,.place-gallery-dots [aria-current=true] span{height:7px;border-radius:999px;transform:none}
+.place-gallery-dots span{width:7px;background:#cfcdc2;transition:width 260ms var(--ease-out),background-color 200ms ease}
+.place-gallery-dots [aria-current=true] span{width:20px;background:var(--color-brand)}
+.place-gallery-dots button:hover:not([aria-current=true]) span{background:#a9a79b}
+
+/* Dots v4: one liquid indicator glides between dots */
+.place-gallery-dots{position:relative;--slot:26px}
+.place-gallery-dots button,.place-gallery-dots [aria-current=true]{position:relative;z-index:1;width:var(--slot)}
+.place-gallery-dots span,.place-gallery-dots [aria-current=true] span{width:7px;height:7px;background:#cfcdc2;transform:none}
+.place-gallery-dots button:hover span{background:#a9a79b}
+.place-gallery-indicator{position:absolute;z-index:2;top:50%;left:0;width:var(--slot);height:9px;margin-top:-4.5px;display:grid;place-items:center;pointer-events:none;transform:translateX(calc(var(--active) * var(--slot)));transition:transform 420ms cubic-bezier(.34,1.45,.5,1)}
+.place-gallery-indicator>span{display:block;width:18px;height:9px;border-radius:999px;background:var(--color-brand);box-shadow:0 2px 6px -1px color-mix(in srgb,var(--color-brand) 55%,transparent);animation:indicator-stretch 420ms cubic-bezier(.3,.7,.3,1)}
+@keyframes indicator-stretch{0%{transform:scaleX(1)}35%{transform:scaleX(1.9) scaleY(.75)}70%{transform:scaleX(.92) scaleY(1.05)}100%{transform:scaleX(1)}}
+@media(prefers-reduced-motion:reduce){.place-gallery-indicator{transition:none}.place-gallery-indicator>span{animation:none}}

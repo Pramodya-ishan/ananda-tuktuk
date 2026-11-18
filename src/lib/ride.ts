@@ -2,6 +2,7 @@ const preferredLanguages = {
   en: "English",
   de: "German",
   fr: "French",
+  it: "Italian",
   ru: "Russian",
   "zh-CN": "Simplified Chinese",
 };
