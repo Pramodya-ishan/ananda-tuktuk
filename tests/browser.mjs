@@ -58,7 +58,7 @@ try {
     await page.getByText("I'm Ananda, your local driver. Choose a short ride or an outing with the stops you like.", { exact: true }).waitFor();
     for (const text of ["Hotel pickup", "I can wait", "Ride back"]) await page.getByText(text, { exact: true }).waitFor();
     assert.equal(await page.locator('a[href*="94770000000"]').count(), 0);
-    assert.equal(await page.locator(".experience-card").count(), 6);
+    assert.equal(await page.locator(".experience-card").count(), 5);
   });
 
   await check("Place details trap focus and Escape returns to the photo", async () => {
@@ -100,7 +100,8 @@ try {
     await page.locator('input[name="pickup"]').fill("Hôtel & Spa + a quiet lunch");
     await page.locator('input[name="date"]').fill("2099-10-12");
     await page.locator('input[name="time"]').fill("09:30");
-    await page.locator('select[name="guests"]').selectOption("2");
+    await page.getByRole("button", { name: "More people", exact: true }).click();
+    await page.getByRole("button", { name: "More people", exact: true }).click();
     await page.getByRole("checkbox", { name: /Bring me back to my hotel/ }).focus();
     await page.keyboard.press("Space");
     await page.locator('textarea[name="notes"]').fill("Vegetarian food, please. ස්තුතියි!");
@@ -164,12 +165,12 @@ try {
 
   await check("Interest filters show the right stops without losing the selected stops", async () => {
     await page.getByRole("button", { name: "Crafts & shops", exact: true }).click();
-    assert.equal(await page.locator(".experience-card").count(), 2);
+    assert.deepEqual(await page.locator(".experience-card .experience-title").allTextContents(), ["Woodwork & crafts"]);
     assert.equal(await page.locator('.experience-card[data-selected="true"]').count(), 1);
     await page.getByRole("button", { name: "Herbs & massage", exact: true }).click();
     assert.equal(await page.locator(".experience-card").count(), 2);
     await page.getByRole("button", { name: "Everything", exact: true }).click();
-    assert.equal(await page.locator(".experience-card").count(), 10);
+    assert.equal(await page.locator(".experience-card").count(), 9);
     assert.equal(await page.locator(".selected-stops li").count(), 3);
   });
 
@@ -189,9 +190,10 @@ try {
     await question.focus();
     await page.keyboard.press("Enter");
     assert.equal(await question.getAttribute("aria-expanded"), "true");
-    assert.equal(await page.locator("#faq-answer-0").isVisible(), true);
+    const answer = page.locator(`[id="${await question.getAttribute("aria-controls")}"]`);
+    await answer.waitFor({ state: "visible" });
     await page.keyboard.press("Enter");
-    assert.equal(await page.locator("#faq-answer-0").isVisible(), false);
+    await answer.waitFor({ state: "hidden" });
   });
 
   for (const [width, height] of [[320, 640], [360, 800], [390, 844], [430, 932], [844, 390], [1440, 900]]) {

@@ -24,17 +24,24 @@ The confirmed public contact numbers are saved in `src/lib/contact.ts`:
 - WhatsApp: `+94761432320`
 - Calls: `+94767797873`
 
-The planner opens the WhatsApp chat with the visitor's stops, pickup and ride details filled in. The visitor sends the message in WhatsApp, then agrees on the plan with Ananda. Call links use the separate call number. Change the constants and rebuild to update these contacts.
+The planner opens WhatsApp with an English draft that notes the visitor’s selected site language. The visitor sends the message and agrees on the plan with Ananda. Regular calls use the separate call number. Change the constants and rebuild to update these contacts.
 
 Copy `.env.example` to `.env.local` when the final HTTPS website address is confirmed:
 
 ```dotenv
 NEXT_PUBLIC_SITE_URL=
+WHATSAPP_VOICE_CALL_URL=
 ```
 
-Restart the development server or rebuild after changing this address. Pickup, stops, waiting, return travel, availability and price are agreed in the conversation.
+Set the optional `WHATSAPP_VOICE_CALL_URL` to Ananda’s own WhatsApp voice-call link. Without it, the footer opens the chat and explains how to call from there. Restart the development server or rebuild after changing either setting.
 
 Generate the visiting-card QR code only after the final website address is confirmed.
+
+## Languages
+
+The site supports English, German, French, Russian, and Simplified Chinese. Unprefixed URLs follow the browser's language preferences until the visitor chooses a language in the header. That choice is remembered. Links such as `/fr/tours` always show their specified language. Switching keeps the current page, stops, and draft details.
+
+The original English copy lives in the components and `src/lib/content.ts`. Update the corresponding catalogs in `src/lib/i18n/` when changing public copy.
 
 ## Content and design
 

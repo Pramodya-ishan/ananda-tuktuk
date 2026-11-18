@@ -1,0 +1,1 @@
+Edited with built-in image generation from the user supplied logo. Prompt: Remove lettering by cropping only. Return a tight rectangular crop of the original tuk-tuk symbol above the text, with a small white margin. Preserve original solid flat dark maroon lines on pure white. No text, glow, gradients, shadows or redesign.
