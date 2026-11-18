@@ -6,8 +6,9 @@ import { contentMessages } from "./content";
 import { editorialMessages } from "./editorial";
 import { locales, localeFromSegment, localePath, translate, type Locale, type Translations } from "./locale";
 import { siteMessages } from "./site";
+import { italianMessages } from "./italian";
 
-export const getMessages = cache((locale: Locale): Translations => locale === "en" ? {} : {
+export const getMessages = cache((locale: Locale): Translations => locale === "en" ? {} : locale === "it" ? italianMessages : {
   ...contentMessages[locale], ...bookingMessages[locale], ...editorialMessages[locale], ...siteMessages[locale],
 });
 

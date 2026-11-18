@@ -1,13 +1,13 @@
-export const locales = ["en", "de", "fr", "ru", "zh-CN"] as const;
+export const locales = ["en", "de", "fr", "it", "ru", "zh-CN"] as const;
 export type Locale = (typeof locales)[number];
 export type Translations = Readonly<Record<string, string>>;
 export type Values = Record<string, string | number>;
 
 export const languageNames: Record<Locale, string> = {
-  en: "English", de: "Deutsch", fr: "Français", ru: "Русский", "zh-CN": "简体中文",
+  en: "English", de: "Deutsch", fr: "Français", it: "Italiano", ru: "Русский", "zh-CN": "简体中文",
 };
 export const languageCodes: Record<Locale, string> = {
-  en: "EN", de: "DE", fr: "FR", ru: "RU", "zh-CN": "中文",
+  en: "EN", de: "DE", fr: "FR", it: "IT", ru: "RU", "zh-CN": "中文",
 };
 export const localeCookie = "ananda-language";
 

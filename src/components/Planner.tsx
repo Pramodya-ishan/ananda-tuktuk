@@ -31,6 +31,10 @@ export function Planner({ initialRide }: { initialRide?: RideDraft["rideType"] }
     { label: "Tomorrow", value: new Date(Date.parse(`${today}T00:00:00Z`) + 86_400_000).toISOString().slice(0, 10) },
   ];
   const customDate = Boolean(details.date) && !quickDates.some(({ value }) => value === details.date);
+  const [wantsDate, setPickDate] = useState(false);
+  const [wantsTime, setPickTime] = useState(false);
+  const pickDate = wantsDate || customDate;
+  const pickTime = wantsTime || Boolean(details.time);
   const guests = details.guests ? Number(details.guests) : null;
   const peopleLabel = (count: number) => t(count === 1 ? "1 person" : "{count} people", { count });
   const dateLabel = quickDates.find(({ value }) => value === details.date)?.label;
@@ -92,22 +96,24 @@ export function Planner({ initialRide }: { initialRide?: RideDraft["rideType"] }
 
       <fieldset className="planner-step when-field">
         <legend><span className="step-index" aria-hidden="true">3</span>{t("When?")} <small>{t("(optional)")}</small></legend>
-        <div className="chip-row" role="group" aria-label={t("Date")}>
-          {quickDates.map(({ label, value }) => <button type="button" key={label} className="choice-chip" aria-pressed={details.date === value} onClick={() => change({ date: details.date === value ? "" : value })}>{t(label)}</button>)}
-          <label className="choice-chip input-chip" data-active={customDate}>
-            <IconCalendar size={16} aria-hidden="true" /><span className="sr-only">{t("Date")}</span>
-            <input type="date" name="date" min={today} value={details.date} onChange={(event) => change({ date: event.target.value })} />
-          </label>
+        <div className="when-row">
+          <span className="when-label" id="when-day">{t("Day")}</span>
+          <div className="chip-row" role="group" aria-labelledby="when-day">
+            {quickDates.map(({ label, value }) => <button type="button" key={label} className="choice-chip" aria-pressed={!pickDate && details.date === value} onClick={() => { setPickDate(false); change({ date: details.date === value ? "" : value }); }}>{t(label)}</button>)}
+            <button type="button" className="choice-chip" aria-pressed={pickDate} aria-expanded={pickDate} aria-controls="ride-date" onClick={() => { setPickDate(!pickDate); if (pickDate) change({ date: "" }); }}><IconCalendar size={16} aria-hidden="true" />{t("Another date")}</button>
+          </div>
+          {pickDate && <label className="picker-field" id="ride-date"><span>{t("Choose a date")}</span><input type="date" name="date" min={today} value={details.date} onChange={(event) => change({ date: event.target.value })} autoFocus /></label>}
         </div>
-        <div className="chip-row" role="group" aria-label={t("Time")}>
-          {timesOfDay.map((part) => {
-            const active = details.timeOfDay === part && !details.time;
-            return <button type="button" key={part} className="choice-chip" aria-pressed={active} onClick={() => change({ timeOfDay: active ? "" : part, time: "" })}>{t(part)}</button>;
-          })}
-          <label className="choice-chip input-chip" data-active={Boolean(details.time)}>
-            <IconClock size={16} aria-hidden="true" /><span className="sr-only">{t("Time")}</span>
-            <input type="time" name="time" value={details.time} onChange={(event) => change({ time: event.target.value, timeOfDay: "" })} />
-          </label>
+        <div className="when-row">
+          <span className="when-label" id="when-time">{t("Time")}</span>
+          <div className="chip-row" role="group" aria-labelledby="when-time">
+            {timesOfDay.map((part) => {
+              const active = !pickTime && details.timeOfDay === part;
+              return <button type="button" key={part} className="choice-chip" aria-pressed={active} onClick={() => { setPickTime(false); change({ timeOfDay: active ? "" : part, time: "" }); }}>{t(part)}</button>;
+            })}
+            <button type="button" className="choice-chip" aria-pressed={pickTime} aria-expanded={pickTime} aria-controls="ride-time" onClick={() => { setPickTime(!pickTime); change(pickTime ? { time: "" } : { timeOfDay: "" }); }}><IconClock size={16} aria-hidden="true" />{t("Exact time")}</button>
+          </div>
+          {pickTime && <label className="picker-field" id="ride-time"><span>{t("Choose a time")}</span><input type="time" name="time" value={details.time} onChange={(event) => change({ time: event.target.value, timeOfDay: "" })} autoFocus /></label>}
         </div>
       </fieldset>
 

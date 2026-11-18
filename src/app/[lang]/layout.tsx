@@ -53,7 +53,7 @@ export async function generateMetadata({ params }: { params: LangParams }): Prom
     title: { default: title, template: `%s | ${siteName}` },
     description,
     openGraph: {
-      type: "website", locale: { en: "en_GB", de: "de_DE", fr: "fr_FR", ru: "ru_RU", "zh-CN": "zh_CN" }[locale],
+      type: "website", locale: { en: "en_GB", de: "de_DE", fr: "fr_FR", it: "it_IT", ru: "ru_RU", "zh-CN": "zh_CN" }[locale],
       siteName, title: socialTitle, description,
       ...(siteUrl ? { images: [{ url: "/images/hero-red.webp", width: 1024, height: 1024, alt: t("A red tuk-tuk with Sigiriya Rock in the distance") }] } : {}),
     },
