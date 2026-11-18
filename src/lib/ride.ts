@@ -1,26 +1,41 @@
+const preferredLanguages = {
+  en: "English",
+  de: "German",
+  fr: "French",
+  ru: "Russian",
+  "zh-CN": "Simplified Chinese",
+};
+
 export type RideRequest = {
   pickup?: string;
   date?: string;
   time?: string;
   guests?: string;
+  timeOfDay?: string;
+  luggage?: boolean;
   rideType?: string;
   stops: string[];
   returnToHotel: boolean;
   notes?: string;
+  locale?: keyof typeof preferredLanguages;
 };
 
 export const rideTypes = ["A short ride", "A few stops", "Help me choose"] as const;
+export const timesOfDay = ["Morning", "Midday", "Afternoon", "Evening"] as const;
+export const maxGuests = 12;
 export type RideDraft = {
   rideType: (typeof rideTypes)[number];
   pickup: string;
   date: string;
   time: string;
+  timeOfDay: "" | (typeof timesOfDay)[number];
   guests: string;
+  luggage: boolean;
   returnToHotel: boolean;
   notes: string;
 };
 export const emptyRideDraft: RideDraft = {
-  rideType: "Help me choose", pickup: "", date: "", time: "", guests: "", returnToHotel: true, notes: "",
+  rideType: "Help me choose", pickup: "", date: "", time: "", timeOfDay: "", guests: "", luggage: false, returnToHotel: true, notes: "",
 };
 
 export function sanitizeRideDraft(value: unknown): RideDraft {
@@ -35,7 +50,9 @@ export function sanitizeRideDraft(value: unknown): RideDraft {
     pickup: text("pickup", 180),
     date: /^\d{4}-\d{2}-\d{2}$/.test(date) ? date : "",
     time: /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time) ? time : "",
-    guests: ["1", "2", "3", "4 or more"].includes(text("guests", 20)) ? text("guests", 20) : "",
+    timeOfDay: timesOfDay.find((value) => value === saved.timeOfDay) ?? "",
+    guests: /^(?:[1-9]|1[0-2])$/.test(text("guests", 2)) ? text("guests", 2) : "",
+    luggage: saved.luggage === true,
     returnToHotel: typeof saved.returnToHotel === "boolean" ? saved.returnToHotel : true,
     notes: text("notes", 500),
   };
@@ -43,11 +60,16 @@ export function sanitizeRideDraft(value: unknown): RideDraft {
 
 export function buildRideMessage(request: RideRequest): string {
   const lines = ["Hi Ananda! I'd like to arrange a tuk-tuk ride."];
+  if (request.locale) {
+    lines.push(`Preferred language: ${preferredLanguages[request.locale]}`);
+  }
   if (request.rideType) lines.push(`Ride: ${request.rideType}`);
   if (request.pickup?.trim()) lines.push(`Pickup: ${request.pickup.trim()}`);
   if (request.date) lines.push(`Date: ${request.date}`);
   if (request.time) lines.push(`Preferred time: ${request.time}`);
+  else if (request.timeOfDay) lines.push(`Preferred time: ${request.timeOfDay.toLowerCase()}`);
   if (request.guests) lines.push(`Guests: ${request.guests}`);
+  if (request.luggage) lines.push("We'll have luggage with us.");
   lines.push("");
   if (request.stops.length) {
     lines.push("I'd like to visit:", ...request.stops.map((stop) => `• ${stop}`));

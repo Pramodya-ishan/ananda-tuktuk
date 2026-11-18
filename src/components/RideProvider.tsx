@@ -6,9 +6,11 @@ import { emptyRideDraft, sanitizeRideDraft, sanitizeStopIds, type RideDraft } fr
 
 const STORAGE_KEY = "ananda:stops:v1";
 const DRAFT_KEY = "ananda:draft:v1";
+const PRESET_KEY = "ananda:ride-preset:v1";
 const empty = { selected: [] as string[], draft: emptyRideDraft };
 let current = empty;
 let loaded = false;
+let lastPreset: RideDraft["rideType"] | undefined;
 const listeners = new Set<() => void>();
 
 function getSnapshot() {
@@ -41,10 +43,23 @@ function updateDraft(fields: Partial<RideDraft>) {
   listeners.forEach((listener) => listener());
 }
 
+function initializeRideType(rideType: RideDraft["rideType"]) {
+  getSnapshot();
+  // A new preset can change ride type without changing any other fields.
+  // Reloading the same query in another language should preserve edits.
+  let previous: string | null | undefined = lastPreset;
+  try { previous = sessionStorage.getItem(PRESET_KEY) ?? lastPreset; } catch { /* Use in-memory state. */ }
+  if (previous === rideType) return;
+  lastPreset = rideType;
+  try { sessionStorage.setItem(PRESET_KEY, rideType); } catch { /* Use in-memory state. */ }
+  updateDraft({ rideType });
+}
+
 type RideSelection = {
   selected: string[];
   draft: RideDraft;
   updateDraft: (fields: Partial<RideDraft>) => void;
+  initializeRideType: (rideType: RideDraft["rideType"]) => void;
   toggleStop: (id: string) => void;
   addStops: (ids: string[]) => void;
   clearStops: () => void;
@@ -59,6 +74,7 @@ export function RideProvider({ children }: { children: ReactNode }) {
       selected,
       draft,
       updateDraft,
+      initializeRideType,
       toggleStop: (id) => update(current.selected.includes(id) ? current.selected.filter((stop) => stop !== id) : [...current.selected, id]),
       addStops: (ids) => update([...current.selected, ...ids]),
       clearStops: () => update([]),

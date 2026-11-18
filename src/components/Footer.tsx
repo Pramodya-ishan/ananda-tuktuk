@@ -1,6 +1,7 @@
-import Link from "next/link";
-import { IconArrowUpRight, IconPhone, IconBrandWhatsapp } from "@tabler/icons-react";
-import { contactPhone, enquiryLink, whatsappPhone } from "@/lib/site-config";
+import { LocaleLink as Link } from "./LocaleLink";
+import { IconArrowUpRight, IconPhone } from "@tabler/icons-react";
+import { contactPhone } from "@/lib/site-config";
+import { translate, type Translations } from "@/lib/i18n/locale";
 import { SectionLink } from "./SectionLink";
 import { MotionSection } from "./MotionSection";
 
@@ -10,30 +11,30 @@ function phoneLabel(phone: string) {
     : `+${phone}`;
 }
 
-export function Footer() {
+export function Footer({ messages }: { messages: Translations }) {
+  const t = (english: string) => translate(messages, english);
   return <MotionSection as="footer" cinema className="site-footer">
     <div className="container-page">
       <div className="footer-main">
         <div className="footer-intro" data-reveal="intro">
-          <Link href="/" className="footer-brand">Ananda&apos;s<br /><em>tuk-tuk.</em></Link>
-          <p>I&apos;m your local driver around<br />Dambulla &amp; Sigiriya.</p>
-          <SectionLink href="/tours#explore" className="btn-brand footer-cta">Plan a ride<IconArrowUpRight size={18} aria-hidden="true" /></SectionLink>
+          <Link href="/" className="footer-brand">{t("Ananda's")}<br /><em>{t("tuk-tuk.")}</em></Link>
+          <p>{t("I'm your local driver around Dambulla & Sigiriya.")}</p>
+          <SectionLink href="/tours#explore" className="btn-brand footer-cta">{t("Plan a ride")}<IconArrowUpRight size={18} aria-hidden="true" /></SectionLink>
         </div>
         <nav className="footer-links" aria-labelledby="footer-explore-title" data-reveal="links">
-          <h2 id="footer-explore-title" className="footer-heading">Explore</h2>
-          <Link href="/">Home</Link>
-          <Link href="/tours">Places &amp; stops</Link>
-          <Link href="/about">About me</Link>
-          <Link href="/contact">Arrange a ride</Link>
+          <h2 id="footer-explore-title" className="footer-heading">{t("Explore")}</h2>
+          <Link href="/">{t("Home")}</Link>
+          <Link href="/tours">{t("Places & stops")}</Link>
+          <Link href="/about">{t("About me")}</Link>
+          <Link href="/contact">{t("Arrange a ride")}</Link>
         </nav>
         <div className="footer-contact" data-reveal="contact">
-          <h2 className="footer-heading">Talk to me</h2>
-          {enquiryLink && whatsappPhone && <a href={enquiryLink} target="_blank" rel="noopener noreferrer" className="footer-contact-link"><IconBrandWhatsapp size={20} aria-hidden="true" /><span><span className="footer-contact-label">WhatsApp me</span><span className="footer-contact-number">{phoneLabel(whatsappPhone)}</span></span></a>}
-          {contactPhone && <a href={`tel:+${contactPhone}`} className="footer-contact-link"><IconPhone size={20} aria-hidden="true" /><span><span className="footer-contact-label">Call me</span><span className="footer-contact-number">{phoneLabel(contactPhone)}</span></span></a>}
+          <h2 className="footer-heading">{t("Talk to me")}</h2>
+          {contactPhone && <a href={`tel:+${contactPhone}`} className="footer-contact-link"><IconPhone size={20} aria-hidden="true" /><span><span className="footer-contact-label">{t("Call me")}</span><span className="footer-contact-number">{phoneLabel(contactPhone)}</span></span></a>}
         </div>
       </div>
-      <div className="footer-bottom" data-reveal="bottom"><p>© {new Date().getFullYear()} Ananda&apos;s Tuk-Tuk</p><p>Hotel pickup · Waiting · Ride back</p></div>
-      <p className="footer-credit"><span>Designed and developed by</span><a href="https://himansa.web.app/" target="_blank" rel="noopener noreferrer">Himansa Wickramasighe</a></p>
+      <div className="footer-bottom" data-reveal="bottom"><p>© {new Date().getFullYear()} {t("Ananda's Tuk-Tuk")}</p><p>{t("Hotel pickup · Waiting · Ride back")}</p></div>
+      <p className="footer-credit"><span>{t("Designed and developed by")}</span><a href="https://himansa.web.app/" target="_blank" rel="noopener noreferrer">Himansa Wickramasighe</a></p>
     </div>
   </MotionSection>;
 }

@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { LocaleLink } from "@/components/LocaleLink";
+import { useLocale } from "@/components/LocaleProvider";
 import { SectionLink } from "./SectionLink";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { IconArrowUpRight } from "@tabler/icons-react";
@@ -31,6 +32,7 @@ function subscribeVisibility(listener: () => void) {
 }
 
 export function DestinationShowcase() {
+  const { t } = useLocale();
   const container = useRef<HTMLElement>(null);
   const previous = useRef<number | null>(null);
   const instant = useRef(false);
@@ -134,7 +136,7 @@ export function DestinationShowcase() {
     return () => window.clearTimeout(timer);
   }, [playing, active, nearby]);
 
-  return <section ref={container} className="destination-showcase" data-reveal-together aria-label="Destinations with Ananda" aria-roledescription="carousel"
+  return <section ref={container} className="destination-showcase" data-reveal-together aria-label={t("Destinations with Ananda")} aria-roledescription={t("carousel")}
     onFocusCapture={() => setFocused(true)} onBlurCapture={event => { if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false); }}
     onPointerEnter={() => { if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) setHovered(true); }} onPointerLeave={() => setHovered(false)}>
     <div className="showcase-background" aria-hidden="true" data-parallax-frame><div className="showcase-scroll-layer parallax-layer" data-parallax>
@@ -142,12 +144,12 @@ export function DestinationShowcase() {
     </div></div>
     <div className="showcase-wash" aria-hidden="true" />
     <div className="showcase-content">
-      <div className="showcase-cards" data-reveal="destinations">{places.map((place, index) => <button key={place.name} type="button" className="showcase-card" aria-label={`View ${place.name}`} aria-pressed={active === index} onClick={event => select(index, event.detail === 0)}><span className="showcase-card-photo"><Image src={place.image} alt="" fill sizes="130px" quality={90} className="cover-image" /><span className="showcase-card-label">{place.name}</span></span></button>)}</div>
+      <div className="showcase-cards" data-reveal="destinations">{places.map((place, index) => <button key={place.name} type="button" className="showcase-card" aria-label={t("View {place}", { place: t(place.name) })} aria-pressed={active === index} onClick={event => select(index, event.detail === 0)}><span className="showcase-card-photo"><Image src={place.image} alt="" fill sizes="130px" quality={90} className="cover-image" /><span className="showcase-card-label">{t(place.name)}</span></span></button>)}</div>
       <div className="showcase-text" aria-live="off" data-reveal="copy">
-        <h2 className="showcase-title">{places[caption].title[0]}<br />{places[caption].title[1]}</h2>
-        <p className="showcase-desc">{places[caption].description}</p>
+        <h2 className="showcase-title">{t(places[caption].title[0])}<br />{t(places[caption].title[1])}</h2>
+        <p className="showcase-desc">{t(places[caption].description)}</p>
       </div>
-      <div className="showcase-actions" data-reveal="actions"><Link href="/tours" className="btn-brand">Explore places<IconArrowUpRight size={18} aria-hidden="true" /></Link><SectionLink href="/tours#explore" className="btn-outline">Plan a ride<IconArrowUpRight size={18} aria-hidden="true" /></SectionLink></div>
+      <div className="showcase-actions" data-reveal="actions"><LocaleLink href="/tours" className="btn-brand">{t("Explore places")}<IconArrowUpRight size={18} aria-hidden="true" /></LocaleLink><SectionLink href="/tours#explore" className="btn-outline">{t("Plan a ride")}<IconArrowUpRight size={18} aria-hidden="true" /></SectionLink></div>
     </div>
   </section>;
 }

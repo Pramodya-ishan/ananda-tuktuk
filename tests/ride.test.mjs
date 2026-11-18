@@ -61,7 +61,7 @@ test("trip dates use Sri Lanka's day rather than the browser's timezone", () => 
 test("a saved enquiry retains valid fields and safely discards malformed data", () => {
   const draft = {
     rideType: "A few stops", pickup: "Hôtel & Spa", date: "2099-10-12",
-    time: "09:30", guests: "2", returnToHotel: false, notes: "ස්තුතියි!",
+    time: "09:30", timeOfDay: "", guests: "2", luggage: true, returnToHotel: false, notes: "ස්තුතියි!",
   };
   assert.deepEqual(ride.sanitizeRideDraft?.(draft), draft);
   assert.deepEqual(ride.sanitizeRideDraft?.(null), ride.emptyRideDraft);

@@ -4,16 +4,19 @@ import { useEffect, useRef, useState, type PointerEvent, type KeyboardEvent } fr
 import Image from "next/image";
 import { IconChevronLeft, IconChevronRight } from "@tabler/icons-react";
 import type { StopPhoto } from "@/lib/content";
+import { useLocale } from "./LocaleProvider";
 
 /** Native touch scrolling keeps horizontal swipes and vertical drawer scrolling independent. */
 export function PlacePhotoGallery({ photos, title }: { photos: StopPhoto[]; title: string }) {
+  const { t } = useLocale();
   const track = useRef<HTMLDivElement>(null);
   const positions = useRef<number[]>([]);
   const frame = useRef(0);
   const requested = useRef<number | null>(null);
   const drag = useRef<{ id: number; x: number; scroll: number; moved: boolean } | null>(null);
   const [active, setActive] = useState(0);
-  const multiple = photos.length > 1;
+  const count = photos.length;
+  const multiple = count > 1;
 
   function currentPhoto() {
     const node = track.current;
@@ -93,18 +96,18 @@ export function PlacePhotoGallery({ photos, title }: { photos: StopPhoto[]; titl
     goTo(next, false);
   }
 
-  return <div className="place-gallery" data-single={!multiple} role="region" aria-roledescription="carousel" aria-label={`${title} photos`} onKeyDown={onKeyDown}>
-    <div ref={track} className="place-gallery-track" tabIndex={multiple ? 0 : undefined} aria-label="Photos. Swipe or use left and right arrow keys."
+  return <div className="place-gallery" data-single={!multiple} role="region" aria-roledescription={t("carousel")} aria-label={t("{title} photos", { title: t(title) })} onKeyDown={onKeyDown}>
+    <div ref={track} className="place-gallery-track" tabIndex={multiple ? 0 : undefined} aria-label={multiple ? t("Photos. Swipe or use left and right arrow keys.") : undefined}
       onScroll={onScroll} onPointerDown={startDrag} onPointerMove={moveDrag} onPointerUp={endDrag} onPointerCancel={endDrag} onLostPointerCapture={endDrag}>
-      {photos.map((photo, index) => <div key={photo.src} className="place-gallery-slide" role="group" aria-roledescription="slide" aria-label={`${index + 1} of ${photos.length}`}>
-        <div className="detail-photo"><Image src={photo.src} alt={photo.alt} fill sizes="(max-width: 700px) 100vw, 600px" quality={65} loading={index === 0 ? "eager" : "lazy"} draggable={false} className="cover-image" /></div>
+      {photos.map((photo, index) => <div key={photo.src} className="place-gallery-slide" role="group" aria-roledescription={t("slide")} aria-label={t("{number} of {count}", { number: index + 1, count })}>
+        <div className="detail-photo"><Image src={photo.src} alt={t(photo.alt)} fill sizes="(max-width: 700px) 100vw, 600px" quality={65} loading={index === 0 ? "eager" : "lazy"} draggable={false} className="cover-image" /></div>
       </div>)}
     </div>
     {multiple && <div className="place-gallery-controls">
-      <div className="place-gallery-meta"><span className="place-gallery-count" aria-hidden="true">{active + 1} / {photos.length}</span><span className="place-gallery-hint">Swipe for more</span></div>
-      <div className="place-gallery-dots" role="group" aria-label="Choose a photo">{photos.map((photo, index) => <button key={photo.src} type="button" aria-label={`View photo ${index + 1} of ${photos.length}`} aria-current={active === index ? "true" : undefined} onClick={event => goTo(index, event.detail !== 0)}><span /></button>)}</div>
-      <div className="place-gallery-arrows"><button type="button" className="icon-button" aria-label="Previous photo" disabled={active === 0} onClick={event => goTo((requested.current ?? active) - 1, event.detail !== 0)}><IconChevronLeft size={19} aria-hidden="true" /></button><button type="button" className="icon-button" aria-label="Next photo" disabled={active === photos.length - 1} onClick={event => goTo((requested.current ?? active) + 1, event.detail !== 0)}><IconChevronRight size={19} aria-hidden="true" /></button></div>
+      <div className="place-gallery-meta"><span className="place-gallery-count" aria-hidden="true"><strong>{active + 1}</strong><span>/ {count}</span></span></div>
+      <div className="place-gallery-dots" role="group" aria-label={t("Choose a photo")}>{photos.map((photo, index) => <button key={photo.src} type="button" aria-label={t("View photo {number} of {count}", { number: index + 1, count })} aria-current={active === index ? "true" : undefined} onClick={event => goTo(index, event.detail !== 0)}><span /></button>)}</div>
+      <div className="place-gallery-arrows"><button type="button" className="icon-button" aria-label={t("Previous photo")} disabled={active === 0} onClick={event => goTo((requested.current ?? active) - 1, event.detail !== 0)}><IconChevronLeft size={19} aria-hidden="true" /></button><button type="button" className="icon-button" aria-label={t("Next photo")} disabled={active === count - 1} onClick={event => goTo((requested.current ?? active) + 1, event.detail !== 0)}><IconChevronRight size={19} aria-hidden="true" /></button></div>
     </div>}
-    <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">Photo {active + 1} of {photos.length}</p>
+    <p className="sr-only" role="status" aria-live="polite" aria-atomic="true">{t("Photo {number} of {count}", { number: active + 1, count })}</p>
   </div>;
 }

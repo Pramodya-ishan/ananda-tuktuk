@@ -6,6 +6,17 @@ export const contactPhone = normalizePhone(CALL_NUMBER);
 export const contactPhoneLabel = contactPhone ? `+${contactPhone}` : null;
 export const enquiryLink = createWhatsAppLink(WHATSAPP_NUMBER, "Hi Ananda! I'd like to arrange a tuk-tuk ride. Can we talk about the places I'd like to visit?");
 
+export function getWhatsAppVoiceLink(value = process.env.WHATSAPP_VOICE_CALL_URL): string | null {
+  if (!value) return null;
+  try {
+    const url = new URL(value);
+    return url.origin === "https://call.whatsapp.com" && !url.username && !url.password &&
+      /^\/voice\/[a-z0-9_-]+\/?$/i.test(url.pathname) ? url.href : null;
+  } catch {
+    return null;
+  }
+}
+
 // Set only after the owner's final site address is confirmed.
 export function getSiteUrl(): URL | undefined {
   const value = process.env.NEXT_PUBLIC_SITE_URL;

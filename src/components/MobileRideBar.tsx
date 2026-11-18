@@ -6,10 +6,16 @@ import { usePathname } from "next/navigation";
 import { useRide } from "./RideProvider";
 import { IconArrowUpRight, IconRoute } from "@tabler/icons-react";
 import { AnimatedCount } from "./AnimatedCount";
+import { useLocale } from "./LocaleProvider";
+import { stripLocale } from "@/lib/i18n/locale";
 
 export function MobileRideBar() {
   const { selected } = useRide();
-  const pathname = usePathname();
+  const { t } = useLocale();
+  const pathname = stripLocale(usePathname());
+  const count = selected.length;
+  const countMessage = count === 1 ? "{count} stop picked" : "{count} stops picked";
+  const [countPrefix, countSuffix] = t(countMessage).split("{count}");
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const bar = ref.current;
@@ -58,5 +64,5 @@ export function MobileRideBar() {
     viewport?.addEventListener("resize", onResize);
     return () => { observer.disconnect(); resizeObserver.disconnect(); cancelAnimationFrame(frame); window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); viewport?.removeEventListener("resize", onResize); };
   }, [pathname]);
-  return <div ref={ref} className="mobile-ridebar" data-planner-visible="false" data-explore-reached={pathname !== "/"} inert={pathname === "/"}><span><IconRoute size={18} aria-hidden="true" /><strong><span className="sr-only">{selected.length ? `${selected.length} ${selected.length === 1 ? "stop" : "stops"} picked` : "Pick your stops"}</span><span aria-hidden="true" className="ridebar-selection" hidden={!selected.length}><AnimatedCount value={selected.length} /> {selected.length === 1 ? "stop" : "stops"} picked</span><span aria-hidden="true" hidden={selected.length > 0}>Pick your stops</span></strong></span><Link className="btn-brand" href={selected.length ? (pathname === "/contact" || pathname === "/tours" ? "#plan" : "/contact#plan") : (pathname === "/tours" ? "#explore" : "/tours#explore")}>{selected.length ? "Plan my ride" : "Plan a ride"}<IconArrowUpRight size={17} aria-hidden="true" /></Link></div>;
+  return <div ref={ref} className="mobile-ridebar" data-planner-visible="false" data-explore-reached={pathname !== "/"} inert={pathname === "/"}><span><IconRoute size={18} aria-hidden="true" /><strong><span className="sr-only">{count ? t(countMessage, { count }) : t("Pick your stops")}</span><span aria-hidden="true" className="ridebar-selection" hidden={!count}>{countPrefix}<AnimatedCount value={count} />{countSuffix}</span><span aria-hidden="true" hidden={count > 0}>{t("Pick your stops")}</span></strong></span><Link className="btn-brand" href={count ? (pathname === "/contact" || pathname === "/tours" ? "#plan" : "/contact#plan") : (pathname === "/tours" ? "#explore" : "/tours#explore")}>{t(count ? "Plan my ride" : "Plan a ride")}<IconArrowUpRight size={17} aria-hidden="true" /></Link></div>;
 }
